@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP INDEX IF EXISTS ix__task__type;
+
+DROP TABLE IF EXISTS task;
+
+COMMIT;
