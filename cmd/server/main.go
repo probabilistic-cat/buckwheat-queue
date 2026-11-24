@@ -2,11 +2,12 @@ package main
 
 import (
 	"buckwheat-queue/internal/config"
-	"buckwheat-queue/internal/log"
+	"buckwheat-queue/internal/logger"
 	"buckwheat-queue/internal/storage/postgres"
 	"buckwheat-queue/internal/storage/postgres/migrations"
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,23 +19,23 @@ func main() {
 
 	cfg := getConfig()
 
-	logger := log.NewLogger(cfg.App.LogLevel)
+	lggr := logger.NewLogger(cfg.App.LogLevel)
 
 	err := commands(ctx, cfg)
 	if err != nil {
-		logger.Error("Main error.", "Error", err)
+		lggr.Error("Main error.", "Error", err)
 		os.Exit(1)
 	}
 
 	// shutdown
 	<-ctx.Done()
-	logger.Info("Shutdown signal received")
+	lggr.Info("Shutdown signal received")
 }
 
 func getConfig() config.Config {
 	cfg, err := config.Load()
 	if err != nil {
-		panic(err)
+		log.Fatalf("Load config: %w", err)
 	}
 
 	return cfg
